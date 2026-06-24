@@ -96,7 +96,7 @@ const QUIZ_DATA = {
           { text: 'Each level is significantly slower but larger — caching places hot data in faster tiers', correct: true },
           { text: 'CPU cache is slower than network disk access', correct: false }
         ],
-        explanation: 'The memory hierarchy shows a speed-size trade-off: CPU cache (~ns) → RAM (~100ns) → SSD (~100μs) → Network (~ms). Caching stores frequently accessed data in faster tiers to avoid expensive trips to slower storage — this principle applies from CPU L1 cache to CDN edge servers.'
+        explanation: 'Each level of the memory hierarchy is slower but larger than the level above it — caching exists to keep hot data in faster tiers. CPU cache (~ns) → RAM (~100ns) → SSD (~100μs) → Network (~ms). This speed-size trade-off applies from CPU L1 cache to CDN edge servers.'
       },
       {
         id: 's1-q7',
@@ -190,7 +190,7 @@ const QUIZ_DATA = {
           { text: 'Redirect latency must be under 100ms at p99', correct: true },
           { text: 'Users can view click analytics', correct: false }
         ],
-        explanation: 'NFRs describe HOW WELL the system performs — latency, availability, scalability, security. "Users can create a short URL" is a Functional Requirement (what the system does). "Redirect under 100ms p99" is an NFR (performance quality).'
+        explanation: '"Redirect latency under 100ms at p99" is a Non-Functional Requirement — it describes HOW WELL the system performs (performance), not WHAT it does. "Users can create a short URL" is a Functional Requirement (a feature). NFRs cover latency, availability, scalability, and security quality targets.'
       },
       {
         id: 's2-q5',
@@ -337,9 +337,9 @@ const QUIZ_DATA = {
           { text: 'Must Have', correct: false },
           { text: 'Should Have', correct: true },
           { text: 'Won\'t Have', correct: false },
-          { text: 'Could Have only if legally required', correct: false }
+          { text: 'Could Have', correct: false }
         ],
-        explanation: 'Core redirect and create functionality are Must Haves. Custom aliases are valuable but not blocking for launch — they are Should Haves. Analytics might be Could Have. QR codes might be Won\'t Have for v1.'
+        explanation: 'Custom alias URLs are a Should Have — valuable for branding but not required for a working v1 launch. Core redirect and create functionality are Must Haves. Analytics might be Could Have. QR codes might be Won\'t Have for v1.'
       },
       {
         id: 's3-q6',
@@ -796,14 +796,14 @@ const QUIZ_DATA = {
       },
       {
         id: 's7-q5',
-        question: 'What is the default eviction policy in Redis?',
+        question: 'What is Redis\'s default maxmemory-policy (eviction behavior when memory is full)?',
         options: [
           { text: 'FIFO (First In First Out)', correct: false },
-          { text: 'LRU (Least Recently Used)', correct: true },
+          { text: 'LRU (Least Recently Used)', correct: false },
           { text: 'Random eviction', correct: false },
-          { text: 'Never evict', correct: false }
+          { text: 'noeviction — reject writes when memory is full (never evict keys)', correct: true }
         ],
-        explanation: 'LRU evicts the item that hasn\'t been accessed for the longest time. It\'s a strong general-purpose policy. LFU (Least Frequently Used) is better for long-tail popularity patterns like viral content.'
+        explanation: 'Redis defaults to noeviction: when maxmemory is reached, write commands fail rather than evicting keys. For cache workloads, operators typically configure maxmemory and set allkeys-lru or volatile-lru — LRU evicts the least recently used keys and is the most common production choice for caching.'
       },
       {
         id: 's7-q6',
@@ -875,7 +875,7 @@ const QUIZ_DATA = {
           { text: 'Horizontal scaling requires no load balancer', correct: false },
           { text: 'Vertical scaling is always inferior', correct: false }
         ],
-        explanation: 'Vertical scaling hits hardware ceilings and diminishing returns (10× cost for 2× performance). Horizontal scaling adds machines — the path to internet scale. Requires load balancing and stateless design but has no upper bound.'
+        explanation: 'Horizontal scaling lets you add more machines to handle growth with no theoretical ceiling — the path to internet scale. Vertical scaling hits hardware ceilings and diminishing returns (10× cost for 2× performance). Horizontal scaling requires load balancing and stateless design but has no upper bound.'
       },
       {
         id: 's8-q2',
@@ -1035,7 +1035,7 @@ const QUIZ_DATA = {
           { text: 'A queue that automatically deletes all messages', correct: false },
           { text: 'A backup database', correct: false }
         ],
-        explanation: 'DLQ captures poison messages that fail repeatedly — preventing infinite retry loops that block the main queue. Engineers inspect DLQ messages manually to diagnose and fix processing bugs.'
+        explanation: 'A Dead Letter Queue (DLQ) is a holding area for messages that failed processing after maximum retries. It captures poison messages that would otherwise cause infinite retry loops on the main queue — engineers inspect DLQ messages manually to diagnose and fix processing bugs.'
       },
       {
         id: 's9-q6',
@@ -1300,7 +1300,7 @@ const QUIZ_DATA = {
           { text: 'Thread-safe singleton access', correct: false },
           { text: 'Automatic API versioning', correct: false }
         ],
-        explanation: 'OrderFacade.placeOrder() coordinates inventory, payment, shipping, and notifications behind one method. Clients don\'t need to know the internal orchestration — reducing coupling and simplifying the API.'
+        explanation: 'A Facade provides a simplified unified interface that hides complexity across multiple subsystems. OrderFacade.placeOrder() coordinates inventory, payment, shipping, and notifications behind one method — clients don\'t need to know the internal orchestration.'
       },
       {
         id: 's11-q9',
@@ -1416,7 +1416,7 @@ const QUIZ_DATA = {
           { text: 'High CPU utilization', correct: true },
           { text: 'Hold and wait', correct: false }
         ],
-        explanation: 'The four Coffman conditions for deadlock: mutual exclusion, hold and wait, no preemption, and circular wait. High CPU utilization is unrelated — deadlock can occur on idle systems when threads are blocked waiting for each other.'
+        explanation: 'High CPU utilization is NOT a Coffman condition for deadlock — deadlocks can occur on idle systems when threads block waiting for each other. The four required conditions are: mutual exclusion, hold and wait, no preemption, and circular wait.'
       },
       {
         id: 's12-q7',
@@ -1714,7 +1714,7 @@ const QUIZ_DATA = {
           { text: 'Hiding URLs from users', correct: false },
           { text: 'Using GET instead of POST', correct: false }
         ],
-        explanation: 'IDOR: changing /api/orders/123 to /api/orders/456 accesses another user\'s data. Defense: always check "does authenticated user X have permission to access resource Y?" — never trust the resource ID alone.'
+        explanation: 'Prevent IDOR by authorizing every request server-side — verify the authenticated user owns or can access the requested resource. Changing /api/orders/123 to /api/orders/456 must not expose another user\'s data; never trust the resource ID alone.'
       },
       {
         id: 's14-q9',
@@ -1924,9 +1924,9 @@ const QUIZ_DATA = {
       { id: 's17-q2', question: 'Redis is used in chat architecture primarily for:', options: [{ text: 'Storing all message history', correct: false }, { text: 'Mapping user_id to chat server and tracking online presence', correct: true }, { text: 'Image storage', correct: false }, { text: 'User password hashing', correct: false }], explanation: 'Redis stores user_id → chat_server_id (which server holds the user\'s WebSocket) and online/offline presence status. Enables routing messages to the correct server for delivery.' },
       { id: 's17-q3', question: 'Cassandra is a good fit for message storage because:', options: [{ text: 'It only supports SQL queries', correct: false }, { text: 'It handles high write throughput and time-series message data with horizontal scaling', correct: true }, { text: 'It eliminates the need for WebSockets', correct: false }, { text: 'It provides strong ACID transactions for chat', correct: false }], explanation: 'Chat generates massive write volume (230K msgs/sec at scale). Cassandra\'s wide-column, write-optimized, eventually consistent model scales horizontally for message history storage.' },
       { id: 's17-q4', question: 'When User B is offline, message delivery should:', options: [{ text: 'Be dropped permanently', correct: false }, { text: 'Store in inbox/pending table and send push notification; sync on reconnect', correct: true }, { text: 'Block User A from sending', correct: false }, { text: 'Only work via email', correct: false }], explanation: 'Offline delivery: persist message in user\'s inbox, send push notification (APNs/FCM). On reconnect, client syncs missed messages from inbox table. Standard WhatsApp/Messenger pattern.' },
-      { id: 's17-q5', question: 'For a group chat with 500 members, fan-out on write means:', options: [{ text: 'Each member reads all messages when opening the group', correct: false }, { text: 'When a message is sent, it is pushed/delivered to all 500 members immediately', correct: true }, { text: 'Messages are never delivered', correct: false }, { text: 'Only the sender sees the message', correct: false }], explanation: 'Fan-out on write for small groups: sender posts → system delivers to all 500 member connections. Works for groups up to ~500. Large groups (10K+) switch to fan-out on read to avoid write amplification.' },
+      { id: 's17-q5', question: 'For a group chat with 500 members, fan-out on write means:', options: [{ text: 'Each member reads all messages when opening the group', correct: false }, { text: 'When a message is sent, it is pushed/delivered to all 500 members immediately', correct: true }, { text: 'Messages are never delivered', correct: false }, { text: 'Only the sender sees the message', correct: false }], explanation: 'Fan-out on write means when a message is sent, it is pushed/delivered to all 500 members immediately — not fetched when each member opens the group (that is fan-out on read). This works for groups up to ~500; larger groups (10K+) switch to fan-out on read to avoid write amplification.' },
       { id: 's17-q6', question: 'Chat servers need Redis pub/sub OR sticky sessions because:', options: [{ text: 'Users can only use one device', correct: false }, { text: 'User A on Server 1 sending to User B on Server 2 requires cross-server message routing', correct: true }, { text: 'Redis replaces WebSockets', correct: false }, { text: 'HTTP load balancers cannot route WebSocket', correct: false }], explanation: 'WebSocket connections are stateful — User B\'s connection lives on Server 2. When User A on Server 1 sends a message, Server 1 must route to Server 2 via Redis pub/sub or a message bus.' },
-      { id: 's17-q7', question: 'Media (images/videos) in chat should be stored in:', options: [{ text: 'The Cassandra messages table as BLOBs', correct: false }, { text: 'Object storage (S3) with CDN; messages table stores only the URL reference', correct: true }, { text: 'Redis', correct: false }, { text: 'Local server disk only', correct: false }], explanation: 'Binary media doesn\'t belong in Cassandra rows. Upload to S3, store URL in message metadata. CDN serves media globally. Keeps message store lean and fast.' },
+      { id: 's17-q7', question: 'Media (images/videos) in chat should be stored in:', options: [{ text: 'The Cassandra messages table as BLOBs', correct: false }, { text: 'Object storage (S3) with CDN; messages table stores only the URL reference', correct: true }, { text: 'Redis', correct: false }, { text: 'Local server disk only', correct: false }], explanation: 'Store media in object storage (S3) with CDN delivery; the messages table stores only the URL reference. Binary blobs don\'t belong in Cassandra rows — upload to S3, save the URL in message metadata, and serve globally via CDN.' },
       { id: 's17-q8', question: 'Message ordering in group chats is typically achieved with:', options: [{ text: 'Random UUIDs only', correct: false }, { text: 'Per-conversation sequence numbers or timestamps with causal ordering', correct: true }, { text: 'Alphabetical sorting by sender name', correct: false }, { text: 'No ordering is needed', correct: false }], explanation: 'Sequence numbers per conversation ensure deterministic ordering. Clock skew makes pure timestamps unreliable — Lamport timestamps or server-assigned sequence IDs provide causal ordering.' },
       { id: 's17-q9', question: 'Kafka in chat architecture is useful for:', options: [{ text: 'Replacing WebSocket connections', correct: false }, { text: 'Decoupling message persistence, analytics, and push notification from the real-time delivery path', correct: true }, { text: 'Storing user passwords', correct: false }, { text: 'Load balancing WebSocket connections', correct: false }], explanation: 'Kafka decouples: chat server publishes message event → consumers handle persistence, analytics, search indexing, and push notifications asynchronously without blocking real-time delivery.' },
       { id: 's17-q10', question: 'At 230K messages/sec, the PRIMARY scaling challenge is:', options: [{ text: 'User interface design', correct: false }, { text: 'Write throughput for message persistence and real-time connection management', correct: true }, { text: 'DNS resolution', correct: false }, { text: 'CSS rendering', correct: false }], explanation: '230K writes/sec requires distributed message storage (Cassandra), horizontal chat server scaling, and efficient connection management. Read path is lighter — users pull history on demand.' }
@@ -1936,11 +1936,11 @@ const QUIZ_DATA = {
   'section-18': {
     title: 'Module 18 Assessment: News Feed Case Study',
     questions: [
-      { id: 's18-q1', question: 'Fan-out on write (push model) pre-computes feeds when:', options: [{ text: 'A user opens their home feed', correct: false }, { text: 'A user creates a new post — pushing post ID to all followers\' feed caches', correct: true }, { text: 'A user logs out', correct: false }, { text: 'The database restarts', correct: false }], explanation: 'Fan-out on write: celebrity posts → system immediately inserts post ID into each follower\'s pre-computed feed cache (Redis sorted set). Reading feed = fast cache lookup. Write cost scales with follower count.' },
+      { id: 's18-q1', question: 'Fan-out on write (push model) pre-computes feeds when:', options: [{ text: 'A user opens their home feed', correct: false }, { text: 'A user creates a new post — pushing post ID to all followers\' feed caches', correct: true }, { text: 'A user logs out', correct: false }, { text: 'The database restarts', correct: false }], explanation: 'Fan-out on write pre-computes feeds at write time: when a user creates a new post, the system pushes the post ID into each follower\'s feed cache (Redis sorted set). Reading the feed later is a fast cache lookup. Write cost scales with follower count — the celebrity problem arises when a user has millions of followers.' },
       { id: 's18-q2', question: 'The celebrity problem in fan-out on write occurs when:', options: [{ text: 'A user has no followers', correct: false }, { text: 'A user with millions of followers posts — requiring millions of cache writes', correct: true }, { text: 'A user unfollows someone', correct: false }, { text: 'The feed is empty', correct: false }], explanation: 'If a celebrity with 30M followers posts, fan-out on write means 30M Redis writes — slow and expensive. Solution: hybrid model — skip fan-out for celebrities, pull their posts on read instead.' },
       { id: 's18-q3', question: 'The hybrid feed approach used by Twitter/Instagram:', options: [{ text: 'Uses only fan-out on read for all users', correct: false }, { text: 'Fan-out on write for normal users; fan-out on read for celebrities; merge at read time', correct: true }, { text: 'Does not use any caching', correct: false }, { text: 'Stores all feeds in a single SQL table', correct: false }], explanation: 'Hybrid: normal user posts → push to follower caches (fast reads). Celebrity posts → skip push, merge into feed at read time. Best of both worlds for mixed follower distributions.' },
       { id: 's18-q4', question: 'Redis sorted sets are ideal for feed caches because:', options: [{ text: 'They only store strings', correct: false }, { text: 'Score (timestamp) enables efficient retrieval of most recent N posts via ZREVRANGE', correct: true }, { text: 'They cannot be updated', correct: false }, { text: 'They replace the need for a database', correct: false }], explanation: 'ZADD feed:user-id timestamp post-id stores posts chronologically. ZREVRANGE feed:user-id 0 19 returns top 20 most recent in O(log N + M) time. Perfect for timeline feeds.' },
-      { id: 's18-q5', question: 'Fan-out on read is BETTER when:', options: [{ text: 'Users have millions of followers', correct: false }, { text: 'Read volume is low relative to writes, or users follow very few people', correct: true }, { text: 'Feed must load in under 10ms always', correct: false }, { text: 'Storage is unlimited', correct: false }], explanation: 'Fan-out on read: assemble feed at request time by querying followed users\' recent posts. Cheap writes, expensive reads. Works when users follow few people or read infrequently.' },
+      { id: 's18-q5', question: 'In a hybrid news feed (Twitter/Instagram style), fan-out on read is preferred for posts from:', options: [{ text: 'Normal users with a few hundred followers', correct: false }, { text: 'Celebrities with millions of followers', correct: true }, { text: 'Users who never post content', correct: false }, { text: 'Users following very few accounts', correct: false }], explanation: 'Hybrid feeds fan-out on write for normal users (push post IDs to follower caches) but fan-out on read for celebrities — a user with millions of followers would trigger millions of cache writes on every post. Instead, celebrity posts are pulled and merged at read time. Pure fan-out on read also suits low read volume or users who follow very few accounts.' },
       { id: 's18-q6', question: 'After retrieving post IDs from feed cache, the feed service must:', options: [{ text: 'Return only the IDs to the client', correct: false }, { text: 'Hydrate full post content (text, media URLs, author info) from the posts store', correct: true }, { text: 'Delete the cache', correct: false }, { text: 'Write new posts', correct: false }], explanation: 'Feed cache stores lightweight post IDs only. Hydration step fetches full post objects (content, images, likes count, author) from posts DB/CDN. Can batch-fetch (MGET) for efficiency.' },
       { id: 's18-q7', question: 'Images and videos in social feeds should be served from:', options: [{ text: 'The PostgreSQL database', correct: false }, { text: 'CDN-backed object storage (S3 + CloudFront) — feed stores only metadata URLs', correct: true }, { text: 'Redis exclusively', correct: false }, { text: 'Email attachments', correct: false }], explanation: 'Media files are large — store in S3, serve via CDN for global low-latency delivery. Feed cache and posts table store only the CDN URL reference, keeping data layers fast.' },
       { id: 's18-q8', question: 'A read:write ratio of 100:1 for a news feed means:', options: [{ text: 'Optimize write path with complex sharding first', correct: false }, { text: 'Optimize read path with pre-computed feeds and aggressive caching', correct: true }, { text: 'Writes and reads are equally important', correct: false }, { text: 'No caching is needed', correct: false }], explanation: '100:1 read:write ratio means feed loads vastly outnumber post creations. Pre-computed feed caches (fan-out on write) and CDN make reads fast. Write path can be simpler.' },
@@ -1973,10 +1973,10 @@ const QUIZ_DATA = {
       { id: 's20-q3', question: 'The recommended book for continued deep learning is:', options: [{ text: 'Harry Potter', correct: false }, { text: 'Designing Data-Intensive Applications by Martin Kleppmann', correct: true }, { text: 'The Great Gatsby', correct: false }, { text: 'Any cookbook', correct: false }], explanation: 'DDIA by Martin Kleppmann is the industry-standard reference for distributed systems, databases, and data-intensive application design. The natural next step after this course.' },
       { id: 's20-q4', question: 'The 7-step system design framework begins with:', options: [{ text: 'Writing production code', correct: false }, { text: 'Clarifying requirements (FRs and NFRs)', correct: true }, { text: 'Choosing a cloud provider', correct: false }, { text: 'Database schema design', correct: false }], explanation: 'Step 1 is always clarify requirements. Steps 2-7: estimate scale, define API, HLD, deep dive, trade-offs, LLD. This framework was introduced in Module 2 and applied in all case studies.' },
       { id: 's20-q5', question: 'WebSockets, Redis presence, and Cassandra are core to which case study?', options: [{ text: 'URL Shortener', correct: false }, { text: 'Chat System', correct: true }, { text: 'News Feed', correct: false }, { text: 'Payment Gateway', correct: false }], explanation: 'Module 17 (Chat System) uses WebSockets for real-time delivery, Redis for presence/routing, Cassandra for message history, and Kafka for async processing.' },
-      { id: 's20-q6', question: 'CAP theorem states that during a network partition you must choose between:', options: [{ text: 'Speed and Cost', correct: false }, { text: 'Consistency and Availability', correct: true }, { text: 'SQL and NoSQL', correct: false }, { text: 'Monolith and Microservices', correct: false }], explanation: 'Module 13 covered CAP in depth. During partitions (unavoidable in distributed systems), choose CP (reject requests for consistency) or AP (serve stale data for availability).' },
-      { id: 's20-q7', question: 'The three pillars of observability are:', options: [{ text: 'CPU, Memory, Disk', correct: false }, { text: 'Metrics, Logs, and Traces', correct: true }, { text: 'HLD, LLD, and API', correct: false }, { text: 'Auth, Encrypt, Audit', correct: false }], explanation: 'Module 15: Metrics (time-series aggregates), Logs (discrete events), Traces (request journeys). Together they answer "what\'s wrong," "what happened," and "where in the chain."' },
+      { id: 's20-q6', question: 'CAP theorem states that during a network partition you must choose between:', options: [{ text: 'Speed and Cost', correct: false }, { text: 'Consistency and Availability', correct: true }, { text: 'SQL and NoSQL', correct: false }, { text: 'Monolith and Microservices', correct: false }], explanation: 'During a network partition, the CAP theorem forces a choice between Consistency and Availability. CP systems reject requests to maintain consistency; AP systems serve potentially stale data to stay available. Partition tolerance is unavoidable in distributed systems (Module 13).' },
+      { id: 's20-q7', question: 'The three pillars of observability are:', options: [{ text: 'CPU, Memory, Disk', correct: false }, { text: 'Metrics, Logs, and Traces', correct: true }, { text: 'HLD, LLD, and API', correct: false }, { text: 'Auth, Encrypt, Audit', correct: false }], explanation: 'The three pillars of observability are Metrics, Logs, and Traces (Module 15). Metrics are time-series aggregates; logs are discrete events; traces follow request journeys across services — together answering "what\'s wrong," "what happened," and "where in the chain."' },
       { id: 's20-q8', question: 'Best practice for mastering system design after this course:', options: [{ text: 'Only re-read modules without practice', correct: false }, { text: 'Design 2 systems/week on Excalidraw and implement at least one project', correct: true }, { text: 'Memorize all quiz answers', correct: false }, { text: 'Avoid mock interviews', correct: false }], explanation: 'Active practice cements learning: weekly design exercises, building a URL shortener or chat app, mock interviews on Pramp/interviewing.io. Theory + practice = interview readiness.' },
-      { id: 's20-q9', question: 'Redis cache-aside pattern was applied in which modules?', options: [{ text: 'Only Module 7', correct: false }, { text: 'Module 7 (Caching) and practically in URL Shortener, News Feed, and Chat case studies', correct: true }, { text: 'Only security module', correct: false }, { text: 'No modules covered caching', correct: false }], explanation: 'Caching theory in Module 7, applied in URL Shortener (redirect cache), News Feed (feed cache sorted sets), and Chat (presence/routing). Caching appears in nearly every scaled system design.' },
+      { id: 's20-q9', question: 'Redis cache-aside pattern was applied in which modules?', options: [{ text: 'Only Module 7', correct: false }, { text: 'Module 7 (Caching) and the URL Shortener case study redirect cache', correct: true }, { text: 'Only the security module', correct: false }, { text: 'No modules covered caching', correct: false }], explanation: 'Cache-aside (check cache → on miss, read DB → populate cache) is taught in Module 7 and applied directly in the URL Shortener redirect path. News Feed uses fan-out on write (push post IDs into Redis sorted sets), and Chat uses Redis for presence/routing — both use Redis but not the classic cache-aside pattern.' },
       { id: 's20-q10', question: 'SOLID principles and design patterns are most relevant to:', options: [{ text: 'High-Level Design only', correct: false }, { text: 'Low-Level Design (Modules 10-11) and LLD interview rounds', correct: true }, { text: 'GitHub Pages deployment', correct: false }, { text: 'DNS configuration', correct: false }], explanation: 'Modules 10-11 cover LLD fundamentals and OOP design patterns (Strategy, Observer, Factory, etc.) — essential for LLD-focused interviews (parking lot, elevator, book library).' }
     ]
   }
@@ -2158,6 +2158,7 @@ function renderQuizSection(sectionId) {
     const shuffled = shuffleOptions(q.options, q.id);
     const correctIndex = shuffled.findIndex(o => o.correct);
     const correctLabel = OPTION_LABELS[correctIndex];
+    const correctText = shuffled[correctIndex].text;
 
     const optionsHTML = shuffled.map((opt, i) => `
       <button type="button"
@@ -2188,7 +2189,7 @@ function renderQuizSection(sectionId) {
             <svg class="quiz-chevron w-5 h-5 text-ocean-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div class="quiz-explanation hidden mt-2 px-4 py-4 bg-white border border-lagoon-200 rounded-xl">
-            <p class="text-sm font-semibold text-palm-700 mb-2">✓ Correct Answer: ${correctLabel}</p>
+            <p class="text-sm font-semibold text-palm-700 mb-2">✓ Correct Answer: ${correctLabel}) ${correctText}</p>
             <p class="text-sm text-slate-600 leading-relaxed">${q.explanation}</p>
           </div>
         </div>

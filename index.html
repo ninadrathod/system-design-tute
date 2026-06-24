@@ -1568,7 +1568,7 @@ function getLongUrl(shortCode):
             <div class="grid md:grid-cols-2 gap-4">
               <div class="bg-white rounded-xl border border-sand-200 p-4">
                 <h4 class="font-semibold text-ocean-700 text-sm mb-2">LRU (Least Recently Used)</h4>
-                <p class="text-xs text-slate-600">Evict the item not accessed for the longest time. Default in Redis. Good general-purpose policy.</p>
+                <p class="text-xs text-slate-600">Evict the item not accessed for the longest time. Commonly configured for cache workloads (e.g. <code class="bg-sand-100 px-1 rounded">allkeys-lru</code>). Redis's default policy is <code class="bg-sand-100 px-1 rounded">noeviction</code>.</p>
               </div>
               <div class="bg-white rounded-xl border border-sand-200 p-4">
                 <h4 class="font-semibold text-ocean-700 text-sm mb-2">LFU (Least Frequently Used)</h4>
